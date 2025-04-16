@@ -61,6 +61,6 @@ vehicleSchema.pre('save', function(next) {
   next();
 });
 
-const Vehicle = mongoose.model('Vehicle', vehicleSchema);
+const vehicle = mongoose.model('Vehicle', vehicleSchema);
 
-export default Vehicle;
+export default vehicle;

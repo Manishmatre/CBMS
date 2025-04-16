@@ -1,4 +1,4 @@
-import Vehicle from '../models/VehicleModel.js';
+import Vehicle from '../models/vehicleModel.js';
 import mongoose from 'mongoose';
 
 // Add a new vehicle
@@ -171,4 +171,4 @@ export const deleteVehicle = async (req, res) => {
       error: 'Server error'
     });
   }
-}; 
+};
