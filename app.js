@@ -15,6 +15,3 @@ app.use('/api/insurance-records', insuranceRecordRoutes);
 app.use('/api/leave-requests', leaveRequestRoutes);
 app.use('/api/designations', designationRoutes);
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
