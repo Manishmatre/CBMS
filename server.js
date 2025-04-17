@@ -8,6 +8,7 @@ import authRoutes from "./routes/authRoutes.js";
 import vehicleRoutes from "./routes/vehicleRoutes.js";
 import employeeRoutes from "./routes/employeeRoutes.js";
 import leaveRequestRoutes from "./routes/leaveRequestRoutes.js";
+import insuranceRecordRoutes from "./routes/insuranceRecordRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -25,6 +26,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/leave-requests", leaveRequestRoutes);
+app.use("/api/insurance-records", insuranceRecordRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the backend server!");

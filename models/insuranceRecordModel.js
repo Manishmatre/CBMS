@@ -38,6 +38,13 @@ const insuranceRecordSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  documents: [
+    {
+      data: Buffer,
+      mimetype: String,
+      filename: String
+    }
+  ],
   createdAt: {
     type: Date,
     default: Date.now

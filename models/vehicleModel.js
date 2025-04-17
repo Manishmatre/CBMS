@@ -45,6 +45,39 @@ const vehicleSchema = new mongoose.Schema({
   fuelType: String,
   fuelEfficiency: Number,
   notes: String,
+  // File uploads as buffers
+  vehiclePhoto: {
+    data: Buffer,
+    mimetype: String,
+    filename: String
+  },
+  rcImage: {
+    data: Buffer,
+    mimetype: String,
+    filename: String
+  },
+  insuranceDoc: {
+    data: Buffer,
+    mimetype: String,
+    filename: String
+  },
+  fitnessCert: {
+    data: Buffer,
+    mimetype: String,
+    filename: String
+  },
+  pucCert: {
+    data: Buffer,
+    mimetype: String,
+    filename: String
+  },
+  otherDocs: [
+    {
+      data: Buffer,
+      mimetype: String,
+      filename: String
+    }
+  ],
   createdAt: {
     type: Date,
     default: Date.now
