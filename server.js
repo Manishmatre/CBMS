@@ -31,9 +31,8 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/vehicle-ma
 app.use(bodyParser.json());
 // Allow both local and deployed frontend domains for CORS
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://vehiclemang.netlify.app'
+  origin: [    
+    'https://vehiclemanagementapp.netlify.app'
   ],
   credentials: true
 }));
