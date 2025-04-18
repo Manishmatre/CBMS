@@ -31,8 +31,14 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/vehicle-ma
 
 // Middleware
 app.use(bodyParser.json());
+// Update this list with your deployed frontend URL(s)
+const allowedOrigins = [
+  'http://localhost:5173', // local development
+  'https://your-frontend-domain.com' // <-- REPLACE with your deployed frontend URL
+];
+
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: allowedOrigins,
   credentials: true
 }));
 app.use(express.json());
