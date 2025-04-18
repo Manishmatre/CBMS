@@ -4,8 +4,9 @@ import {
   getAllVehicles, 
   getVehicle, 
   updateVehicle, 
-  deleteVehicle 
+  deleteVehicle
 } from '../controllers/vehicleController.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 

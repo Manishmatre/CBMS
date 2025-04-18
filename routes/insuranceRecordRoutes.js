@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import { addInsuranceRecord, updateInsuranceRecord } from '../controllers/insuranceRecordController.js';
 import InsuranceRecord from '../models/insuranceRecordModel.js';
-import { validateObjectId } from '../middleware/validateObjectId.js';
+import validateObjectId from '../middleware/validateObjectId.js';
 
 const router = express.Router();
 
