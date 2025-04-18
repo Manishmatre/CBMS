@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import express from "express";
+import http from 'http';
+import { Server } from 'socket.io';
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -82,6 +84,17 @@ app.post('/api/emergency-upload', upload.any(), (req, res) => {
   });
 });
 
+// Real-time location update endpoint
+app.post('/api/vehicles/:id/location', (req, res) => {
+  const loc = { vehicleId: Number(req.params.id), lat: req.body.lat, lng: req.body.lng };
+  io.emit('locationUpdate', loc);
+  res.sendStatus(204);
+});
+
+// Wrap Express in HTTP server and setup Socket.IO
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: 'http://localhost:5173', credentials: true } });
+
 // MongoDB connection with error handling
 const connectDB = async () => {
   try {
@@ -94,8 +107,8 @@ const connectDB = async () => {
     
     console.log("MongoDB connected successfully");
     
-    // Start the server only after MongoDB connection is established
-    app.listen(PORT, () => {
+    // Start HTTP server (with Socket.IO) after DB connects
+    server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   } catch (error) {
