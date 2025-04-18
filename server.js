@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 import express from "express";
-import http from 'http';
-import { Server } from 'socket.io';
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -31,14 +29,12 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/vehicle-ma
 
 // Middleware
 app.use(bodyParser.json());
-// Update this list with your deployed frontend URL(s)
-const allowedOrigins = [
-  'http://localhost:5173', // local development
-  'https://your-frontend-domain.com' // <-- REPLACE with your deployed frontend URL
-];
-
+// Allow both local and deployed frontend domains for CORS
 app.use(cors({
-  origin: allowedOrigins,
+  origin: [
+    'http://localhost:5173',
+    'https://vehiclemang.netlify.app'
+  ],
   credentials: true
 }));
 app.use(express.json());
@@ -90,17 +86,6 @@ app.post('/api/emergency-upload', upload.any(), (req, res) => {
   });
 });
 
-// Real-time location update endpoint
-app.post('/api/vehicles/:id/location', (req, res) => {
-  const loc = { vehicleId: Number(req.params.id), lat: req.body.lat, lng: req.body.lng };
-  io.emit('locationUpdate', loc);
-  res.sendStatus(204);
-});
-
-// Wrap Express in HTTP server and setup Socket.IO
-const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: 'http://localhost:5173', credentials: true } });
-
 // MongoDB connection with error handling
 const connectDB = async () => {
   try {
@@ -113,8 +98,8 @@ const connectDB = async () => {
     
     console.log("MongoDB connected successfully");
     
-    // Start HTTP server (with Socket.IO) after DB connects
-    server.listen(PORT, () => {
+    // Start the server only after MongoDB connection is established
+    app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   } catch (error) {
