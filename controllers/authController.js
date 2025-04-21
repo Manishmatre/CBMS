@@ -85,6 +85,58 @@ export const login = async (req, res) => {
   }
 };
 
+export const updatePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const userId = req.user.id;
+
+  // Input validation
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({
+      success: false,
+      error: "Current and new password are required"
+    });
+  }
+
+  try {
+    // Find user by ID
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found"
+      });
+    }
+
+    // Verify current password
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        error: "Current password is incorrect"
+      });
+    }
+
+    // Hash the new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update password
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.json({
+      success: true,
+      message: "Password updated successfully"
+    });
+  } catch (error) {
+    console.error('Password update error:', error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error"
+    });
+  }
+};
+
 export const register = async (req, res) => {
   const { fullName, email, password, role } = req.body;
 

@@ -1,66 +1,97 @@
 import mongoose from 'mongoose';
 
-const fuelRecordSchema = new mongoose.Schema({
+const fuelPurchaseSchema = new mongoose.Schema({
+  purchaseType: {
+    type: String,
+    required: true,
+    enum: ['bulk', 'direct']
+  },
   vehicleId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Vehicle',
-    required: [true, 'Vehicle ID is required']
+    required: function() { return this.purchaseType === 'direct'; }
   },
-  date: {
-    type: Date,
-    required: [true, 'Date is required'],
-    default: Date.now
-  },
+  employeeName: String,
   fuelType: {
     type: String,
-    required: [true, 'Fuel type is required'],
-    enum: ['Gasoline', 'Diesel', 'Electric', 'Hybrid']
+    required: true,
+    enum: ['Petrol', 'Diesel', 'CNG', 'Electric', 'Other']
   },
   quantity: {
     type: Number,
-    required: [true, 'Fuel quantity is required']
+    required: true,
+    min: 0
   },
-  cost: {
+  perLiterPrice: {
     type: Number,
-    required: [true, 'Cost is required']
+    required: true,
+    min: 0
   },
-  mileage: {
+  totalCost: {
     type: Number,
-    required: [true, 'Current mileage is required']
+    required: true,
+    min: 0
   },
-  previousMileage: {
-    type: Number,
-    required: [true, 'Previous mileage is required']
-  },
-  distance: {
-    type: Number,
-    required: [true, 'Distance traveled is required']
-  },
-  efficiency: {
-    type: Number,
-    required: [true, 'Fuel efficiency is required']
-  },
-  location: {
+  vendor: String,
+  paymentMethod: {
     type: String,
-    required: [true, 'Location is required']
+    enum: ['cash', 'card', 'netbanking', 'upi', 'other'],
+    default: 'cash'
   },
+  purpose: String,
   notes: String,
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
+  receiptPhoto: String,
+  date: {
     type: Date,
     default: Date.now
   }
-});
+}, { timestamps: true });
 
-// Update the updatedAt field before saving
-fuelRecordSchema.pre('save', function(next) {
-  this.updatedAt = Date.now();
-  next();
-});
+export const FuelPurchase = mongoose.model('FuelPurchase', fuelPurchaseSchema);
 
-const FuelRecord = mongoose.model('FuelRecord', fuelRecordSchema);
 
-export default FuelRecord; 
+const fuelConsumptionSchema = new mongoose.Schema({
+  vehicleId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Vehicle',
+    required: true
+  },
+  fuelType: {
+    type: String,
+    required: true,
+    enum: ['Gasoline', 'Diesel', 'Electric', 'Hybrid', 'Other']
+  },
+  quantity: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  mileage: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  previousMileage: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  distance: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  efficiency: {
+    type: Number,
+    required: true
+  },
+  location: String,
+  driverName: String,
+  notes: String,
+  date: {
+    type: Date,
+    default: Date.now
+  }
+}, { timestamps: true });
+
+export const FuelConsumption = mongoose.model('FuelConsumption', fuelConsumptionSchema);

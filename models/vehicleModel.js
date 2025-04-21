@@ -44,6 +44,7 @@ const vehicleSchema = new mongoose.Schema({
   mileage: Number,
   fuelType: String,
   fuelEfficiency: Number,
+  fuelStock: Number,
   notes: String,
   // File uploads as buffers
   vehiclePhoto: {
@@ -93,6 +94,23 @@ vehicleSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
   next();
 });
+
+// Add these static methods to the vehicleSchema
+vehicleSchema.statics.getFuelStock = async function() {
+  const vehicles = await this.find();
+  return vehicles.reduce((acc, vehicle) => {
+    if (!acc[vehicle.fuelType]) acc[vehicle.fuelType] = 0;
+    acc[vehicle.fuelType] += vehicle.fuelStock || 0;
+    return acc;
+  }, {});
+};
+
+vehicleSchema.statics.updateFuelStock = async function(fuelType, quantity) {
+  await this.updateMany(
+    { fuelType },
+    { $inc: { fuelStock: quantity } }
+  );
+};
 
 const Vehicle = mongoose.model('Vehicle', vehicleSchema);
 

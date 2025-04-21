@@ -9,8 +9,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs';
-import { createUploadsDir } from './middleware/uploadMiddleware.js';
+import upload from './middleware/uploadMiddleware.js';
 import multer from 'multer';
+import fuelRecordRoutes from './routes/fuelRecordRoutes.js';
 
 // Import all routes
 import authRoutes from './routes/authRoutes.js';
@@ -19,6 +20,8 @@ import vehicleDocumentRoutes from './routes/vehicleDocumentRoutes.js';
 import employeeRoutes from './routes/employeeRoutes.js';
 import leaveRequestRoutes from './routes/leaveRequestRoutes.js';
 import insuranceRecordRoutes from './routes/insuranceRecordRoutes.js';
+import vehicleTrackingRoutes from './routes/vehicleTrackingRoutes.js';
+import fuelRoutes from './routes/fuelRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -31,8 +34,8 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/vehicle-ma
 app.use(bodyParser.json());
 // Allow both local and deployed frontend domains for CORS
 app.use(cors({
-  origin: [    
-    'https://vehiclemanagementapp.netlify.app'
+  origin: [   
+    "http://localhost:5173"
   ],
   credentials: true
 }));
@@ -40,11 +43,28 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Create uploads directory
-createUploadsDir();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+// Create uploads directory if it doesn't exist
+const createUploadsDir = () => {
+  const uploadsDir = path.join(__dirname, 'uploads');
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir);
+  }
+};
+
+createUploadsDir();
+
+// Create fuel receipts directory if it doesn't exist
+const createFuelReceiptsDir = () => {
+  const fuelReceiptsDir = path.join(__dirname, 'public/uploads/fuel-receipts');
+  if (!fs.existsSync(fuelReceiptsDir)) {
+    fs.mkdirSync(fuelReceiptsDir, { recursive: true });
+  }
+};
+
+createFuelReceiptsDir();
 
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
@@ -61,13 +81,14 @@ app.use('/api/vehicles', vehicleDocumentRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/leave-requests', leaveRequestRoutes);
 app.use('/api/insurance-records', insuranceRecordRoutes);
+app.use('/api/tracking', vehicleTrackingRoutes);
+app.use('/api/fuel', fuelRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the backend server!");
 });
 
 // Emergency document upload endpoint
-const upload = multer({ dest: uploadsDir });
 app.post('/api/emergency-upload', upload.any(), (req, res) => {
   const files = req.files;
   if (!files || Object.keys(files).length === 0) {
@@ -128,3 +149,6 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
+
+// Use fuel record routes
+app.use('/api/fuel-records', fuelRecordRoutes);

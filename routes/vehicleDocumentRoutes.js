@@ -1,29 +1,16 @@
 import express from 'express';
-import {
-  uploadVehicleDocument,
-  getVehicleDocuments,
-  deleteVehicleDocument
-} from '../controllers/vehicleDocumentController.js';
-import upload from '../middleware/uploadMiddleware.js';
-import { authMiddleware } from '../middleware/authMiddleware.js';
+import upload from '../middleware/upload.js';
+import { uploadVehicleDocument } from '../controllers/vehicleDocumentController.js';
 
 const router = express.Router();
 
-// Document routes
-router.post('/:vehicleId/documents', 
-  authMiddleware, 
-  upload.single('document'), 
-  uploadVehicleDocument
-);
+// Upload route: POST /api/vehicle-documents/upload
+router.post('/upload', upload.single('file'), uploadVehicleDocument);
 
-router.get('/:vehicleId/documents', 
-  authMiddleware, 
-  getVehicleDocuments
-);
-
-router.delete('/documents/:docId', 
-  authMiddleware, 
-  deleteVehicleDocument
-);
+// POST /api/vehicles/:vehicleId/documents
+router.post('/vehicles/:vehicleId/documents', upload.single('file'), (req, res, next) => {
+  req.body.vehicleId = req.params.vehicleId;
+  uploadVehicleDocument(req, res, next);
+});
 
 export default router;

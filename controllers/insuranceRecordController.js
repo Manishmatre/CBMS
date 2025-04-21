@@ -1,7 +1,8 @@
 import InsuranceRecord from '../models/insuranceRecordModel.js';
+import Vehicle from '../models/vehicleModel.js';
 
 // Add new insurance record with file support
-export const addInsuranceRecord = async (req, res) => {
+const addInsuranceRecord = async (req, res) => {
   try {
     const insuranceData = {
       vehicleId: req.body.vehicleId,
@@ -28,10 +29,21 @@ export const addInsuranceRecord = async (req, res) => {
 
     const record = new InsuranceRecord(insuranceData);
     await record.save();
+
+    // Update the vehicle's insurance info after creating the insurance record
+    await Vehicle.findByIdAndUpdate(
+      insuranceData.vehicleId,
+      {
+        insurancePolicyNumber: insuranceData.policyNumber,
+        insuranceExpireDate: insuranceData.endDate,
+        insuranceProvider: insuranceData.provider,
+        insuranceId: record._id
+      }
+    );
     
     res.status(201).json({ 
       success: true, 
-      message: 'Insurance record created successfully',
+      message: 'Insurance record created successfully and vehicle updated',
       data: record 
     });
   } catch (error) {
@@ -51,7 +63,7 @@ export const addInsuranceRecord = async (req, res) => {
 };
 
 // Update insurance record (does not update files for simplicity)
-export const updateInsuranceRecord = async (req, res) => {
+const updateInsuranceRecord = async (req, res) => {
   try {
     const record = await InsuranceRecord.findByIdAndUpdate(
       req.params.id,
@@ -70,3 +82,22 @@ export const updateInsuranceRecord = async (req, res) => {
     }
   }
 };
+
+// Get insurance records for a specific vehicle
+const getVehicleInsuranceRecords = async (req, res) => {
+  try {
+    const { vehicleId } = req.params;
+    const records = await InsuranceRecord.find({ vehicleId })
+      .populate('vehicleId', 'registrationNumber make model')
+      .sort({ startDate: -1 });
+    res.status(200).json({ success: true, data: records });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error fetching insurance records', 
+      error: error.message 
+    });
+  }
+};
+
+export { addInsuranceRecord, updateInsuranceRecord, getVehicleInsuranceRecords };

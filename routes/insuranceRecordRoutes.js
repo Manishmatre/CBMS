@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import { addInsuranceRecord, updateInsuranceRecord } from '../controllers/insuranceRecordController.js';
+import { addInsuranceRecord, updateInsuranceRecord, getVehicleInsuranceRecords } from '../controllers/insuranceRecordController.js';
 import InsuranceRecord from '../models/insuranceRecordModel.js';
 import validateObjectId from '../middleware/validateObjectId.js';
 
@@ -34,7 +34,10 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get insurance records for a specific vehicle
+// Get insurance records for a specific vehicle (for VehicleDetails.jsx)
+router.get('/vehicle/:vehicleId/records', getVehicleInsuranceRecords);
+
+// (Legacy) Get insurance records for a specific vehicle
 router.get('/vehicle/:vehicleId', validateObjectId, async (req, res) => {
   try {
     const records = await InsuranceRecord.find({ vehicleId: req.params.vehicleId })

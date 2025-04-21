@@ -1,13 +1,15 @@
 const authRoutes = require('./routes/authRoutes');
-const employeeRoutes = require('./routes/employeeRoutes');
-const vehicleRoutes = require('./routes/vehicleRoutes');
-const fuelRecordRoutes = require('./routes/fuelRecordRoutes');
-const insuranceRecordRoutes = require('./routes/insuranceRecordRoutes');
-const leaveRequestRoutes = require('./routes/leaveRequestRoutes');
-const designationRoutes = require('./routes/designationRoutes');
+import vehicleDocumentRoutes from './routes/vehicleDocumentRoutes.js';
+import upload from './middleware/upload.js';
+import { uploadVehicleDocument } from './controllers/vehicleDocumentController.js';
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/vehicle-documents', vehicleDocumentRoutes);
+app.post('/api/vehicles/:vehicleId/documents', upload.single('file'), (req, res, next) => {
+  req.body.vehicleId = req.params.vehicleId;
+  uploadVehicleDocument(req, res, next);
+});
 app.use('/api/employees', employeeRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/fuel-records', fuelRecordRoutes);
