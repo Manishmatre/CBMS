@@ -20,7 +20,7 @@ import vehicleDocumentRoutes from './routes/vehicleDocumentRoutes.js';
 import employeeRoutes from './routes/employeeRoutes.js';
 import leaveRequestRoutes from './routes/leaveRequestRoutes.js';
 import insuranceRecordRoutes from './routes/insuranceRecordRoutes.js';
-import vehicleTrackingRoutes from './routes/vehicleTrackingRoutes.js';
+import vehicleTrackingRoutes from './routes/vehicletrackingroutes.js';
 import fuelRoutes from './routes/fuelRoutes.js';
 
 dotenv.config();
