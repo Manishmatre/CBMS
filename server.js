@@ -11,7 +11,6 @@ import { dirname } from 'path';
 import fs from 'fs';
 import upload from './middleware/uploadMiddleware.js';
 import multer from 'multer';
-import fuelRecordRoutes from './routes/fuelRecordRoutes.js';
 
 // Import all routes
 import authRoutes from './routes/authRoutes.js';
@@ -35,7 +34,7 @@ app.use(bodyParser.json());
 // Allow both local and deployed frontend domains for CORS
 app.use(cors({
   origin: [  
-    "https://vehiclemanagementapp.netlify.app", 
+    // "https://vehiclemanagementapp.netlify.app", 
     "http://localhost:5173"
   ],
   credentials: true
@@ -149,6 +148,3 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
-
-// Use fuel record routes
-app.use('/api/fuel-records', fuelRecordRoutes);

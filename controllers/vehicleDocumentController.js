@@ -63,7 +63,8 @@ export const uploadVehicleDocument = async (req, res) => {
       return res.status(500).json({ success: false, message: 'Failed to save document metadata.', error: mongoError.message });
     }
 
-    res.status(201).json({ success: true, data: doc, message: 'Document uploaded successfully.' });
+    // Always send fileUrl for frontend compatibility
+    res.status(201).json({ success: true, data: { ...doc.toObject(), fileUrl: doc.url }, message: 'Document uploaded successfully.' });
   } catch (error) {
     console.error('Upload failed:', error);
     res.status(500).json({ success: false, message: 'Upload failed.', error: error.message });
@@ -76,6 +77,8 @@ export const getVehicleDocuments = async (req, res) => {
     let documents = await VehicleDocument.find({ vehicleId }).lean();
     
         // No signed URLs or GCS download links, just return docs
+    // Map url to fileUrl for all documents in the response
+    documents = documents.map(doc => ({ ...doc, fileUrl: doc.url }));
     res.status(200).json({
       success: true,
       data: documents

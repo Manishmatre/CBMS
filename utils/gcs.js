@@ -1,22 +1,20 @@
 import { Storage } from '@google-cloud/storage';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const {
   GCP_PROJECT_ID,
-  GCP_CLIENT_EMAIL,
-  GCP_PRIVATE_KEY,
   GCS_BUCKET_NAME
 } = process.env;
 
-const privateKey = GCP_PRIVATE_KEY.replace(/\\n/g, '\n');
-
 const storage = new Storage({
   projectId: GCP_PROJECT_ID,
-  credentials: {
-    client_email: GCP_CLIENT_EMAIL,
-    private_key: privateKey,
-  },
+  keyFilename: path.join(__dirname, 'cbmsvehicledocs-1d1679652825.json'),
 });
 
 const bucket = storage.bucket(GCS_BUCKET_NAME);
@@ -32,10 +30,9 @@ export async function uploadFileToGCS(buffer, destination, mimetype) {
   const file = bucket.file(destination);
   await file.save(buffer, {
     metadata: { contentType: mimetype },
-    public: true,
     resumable: false,
   });
-  await file.makePublic();
+  // No ACLs or makePublic when uniform bucket-level access is enabled
   return `https://storage.googleapis.com/${GCS_BUCKET_NAME}/${destination}`;
 }
 

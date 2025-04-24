@@ -3,7 +3,13 @@ import multer from 'multer';
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+  const allowedTypes = [
+  'application/pdf',
+  'image/jpeg',
+  'image/png',
+  'application/msword', // DOC
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // DOCX
+];
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {

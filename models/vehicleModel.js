@@ -112,6 +112,6 @@ vehicleSchema.statics.updateFuelStock = async function(fuelType, quantity) {
   );
 };
 
-const Vehicle = mongoose.model('Vehicle', vehicleSchema);
+const Vehicle = mongoose.models.Vehicle || mongoose.model('Vehicle', vehicleSchema);
 
-export default Vehicle;
+export { Vehicle };

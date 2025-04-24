@@ -1,5 +1,5 @@
 import InsuranceRecord from '../models/insuranceRecordModel.js';
-import Vehicle from '../models/vehicleModel.js';
+import { Vehicle } from '../models/vehicleModel.js';
 
 // Add new insurance record with file support
 const addInsuranceRecord = async (req, res) => {

@@ -9,7 +9,16 @@ const vehicleDocumentSchema = new mongoose.Schema({
   documentType: {
     type: String,
     required: true,
-    enum: ['insurance', 'rc', 'puc', 'other'], // add more as needed
+    enum: [
+      'RC Book',
+      'Insurance',
+      'PUC',
+      'Fitness Certificate',
+      'Road Tax',
+      'Permit',
+      'Vehicle Image',
+      'Other'
+    ],
   },
   fileName: { type: String, required: true },
   url: { type: String, required: true },
