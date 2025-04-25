@@ -48,10 +48,18 @@ const createFuelPurchase = asyncHandler(async (req, res) => {
       ...(req.body.purchaseType === 'direct' && { vehicle: req.body.vehicleId })
     });
 
+    // If bulk purchase, add to stock
+    let updatedStock = null;
+    if (req.body.purchaseType === 'bulk') {
+      await Vehicle.updateFuelStock(req.body.fuelType, parseFloat(req.body.quantity));
+      updatedStock = await Vehicle.getFuelStock();
+    }
+
     res.status(201).json({
       success: true,
       data: purchase,
-      message: 'Fuel purchase recorded successfully'
+      message: 'Fuel purchase recorded successfully',
+      ...(updatedStock && { updatedStock })
     });
 
   } catch (error) {
@@ -168,9 +176,35 @@ const calculateFuelConsumption = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc    Delete fuel purchase
+// @route   DELETE /api/fuel/purchase/:id
+// @access  Private
+const deleteFuelPurchase = asyncHandler(async (req, res) => {
+  const purchase = await FuelPurchase.findOneAndDelete({ _id: req.params.id, user: req.user.id });
+  if (!purchase) {
+    res.status(404);
+    throw new Error('Fuel purchase not found');
+  }
+  res.status(200).json({ success: true, message: 'Fuel purchase deleted' });
+});
+
+// @desc    Delete fuel consumption
+// @route   DELETE /api/fuel/consumption/:id
+// @access  Private
+const deleteFuelConsumption = asyncHandler(async (req, res) => {
+  const consumption = await FuelConsumption.findOneAndDelete({ _id: req.params.id, user: req.user.id });
+  if (!consumption) {
+    res.status(404);
+    throw new Error('Fuel consumption not found');
+  }
+  res.status(200).json({ success: true, message: 'Fuel consumption deleted' });
+});
+
 export { 
   createFuelPurchase,
   createFuelConsumption, 
   getFuelRecords,
-  calculateFuelConsumption 
+  calculateFuelConsumption,
+  deleteFuelPurchase,
+  deleteFuelConsumption
 };

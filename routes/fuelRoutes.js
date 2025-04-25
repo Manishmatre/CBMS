@@ -3,6 +3,8 @@ import {
   createFuelPurchase,
   createFuelConsumption,
   getFuelRecords,
+  deleteFuelPurchase,
+  deleteFuelConsumption
 } from '../controllers/fuelController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import upload from '../middleware/uploadMiddleware.js';
@@ -16,6 +18,7 @@ router.post('/purchase',
   createFuelPurchase
 );
 router.get('/purchase', protect, getFuelRecords);
+router.delete('/purchase/:id', protect, deleteFuelPurchase);
 
 // Fuel consumption routes
 router.post('/consumption', 
@@ -24,5 +27,6 @@ router.post('/consumption',
   createFuelConsumption
 );
 router.get('/consumption', protect, getFuelRecords);
+router.delete('/consumption/:id', protect, deleteFuelConsumption);
 
 export default router;
