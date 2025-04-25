@@ -11,7 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
-
+cbmsvehicledocs-1d1679652825.json
 # Editor directories and files
 .vscode/*
 # !.vscode/extensions.json

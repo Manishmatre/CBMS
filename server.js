@@ -34,7 +34,8 @@ app.use(bodyParser.json());
 // Allow both local and deployed frontend domains for CORS
 app.use(cors({
   origin: [  
-    // "https://vehiclemanagementapp.netlify.app", 
+    "https://arionexbuz.netlify.app",
+    "https://vehiclemanagementapp.netlify.app", 
     "http://localhost:5173"
   ],
   credentials: true
